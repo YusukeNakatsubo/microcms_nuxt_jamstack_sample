@@ -5,13 +5,13 @@ Nuxt.js + microCMS + Netlify
 - [microCMS + NuxtでJamstackブログを作ってみよう](https://blog.microcms.io/microcms-nuxt-jamstack-blog/)
 
 ## 0. Index
-1. Install Nuxt.js
-1. Create microCMS account
-1. Setting enviroment variables
-1. Install axios & sass
-1. Edit Vue Template
+1. Nuxt.js をインストールする 
+1. microCMS のアカウントを作成し、APIを登録する
+1. 環境変数を設定する 
+1. axios と sass をインストールする
+1. Vueのテーマファイルを編集する
 
-## 1. Install Nuxt.js
+## 1. Nuxt.js をインストールする
 
 ```bash
 create-nuxt-app v3.7.1
@@ -37,9 +37,11 @@ $ npm run dev
 -> http://localhost:3000/
 ```
 
-## 2. Create microCMS account
+## 2. microCMS のアカウントを作成し、APIを登録する 
 
-## 3. Setting enviroment variables
+## 3. 環境変数を設定する 
+- dotenvを設定しなくても環境変数を.envから読み込むことができる
+- nuxt.config.js に記述が必要
 
 ### .env
 
@@ -67,7 +69,7 @@ export default {
 }
 ```
 
-## 4. Install axios & sass
+## 4. axios と sass をインストールする 
 - node-sassをインストールしてしまうと、デプロイ時にエラーが発生する
 - sass-loaderのバージョン依存を解消しないと、デプロイ時にエラーが発生する
 
@@ -107,7 +109,7 @@ export default {
   ],
 ```
 
-## 5. Edit Vue Template
+## 5. Vueのテーマファイルを編集する 
 
 ### pages/index.vue
 
