@@ -1,5 +1,5 @@
 // 環境変数を定義
-require('dotenv').config();
+// require('dotenv').config();
 const { API_KEY, API_URL } = process.env;
 
 export default {

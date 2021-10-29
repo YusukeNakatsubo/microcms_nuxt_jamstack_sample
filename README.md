@@ -1,69 +1,227 @@
-# microcms_nuxt_jamstack_sample
+# Jamstack Project
+Nuxt.js + microCMS + Netlify
 
-## Build Setup
+## Reference
+- [microCMS + NuxtでJamstackブログを作ってみよう](https://blog.microcms.io/microcms-nuxt-jamstack-blog/)
+
+## 0. Index
+1. Install Nuxt.js
+1. Create microCMS account
+1. Setting enviroment variables
+1. Install axios & sass
+1. Edit Vue Template
+
+## 1. Install Nuxt.js
 
 ```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
+create-nuxt-app v3.7.1
+✨  Generating Nuxt.js project in microcms_nuxt_jamstack_sample
+? Project name: microcms_nuxt_jamstack_sample
+? Programming language: JavaScript
+? Package manager: Npm
+? UI framework: None
+? Nuxt.js modules: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? Linting tools: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? Testing framework: None
+? Rendering mode: Universal (SSR / SSG)
+? Deployment target: Static (Static/Jamstack hosting)
+? Development tools: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? What is your GitHub username? yusukenakatsubo
+? Version control system: Git
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+```bash
+$ cd microcms_nuxt_jamstack_sample
+$ npm run dev
 
-## Special Directories
+-> http://localhost:3000/
+```
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+## 2. Create microCMS account
 
-### `assets`
+## 3. Setting enviroment variables
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+### .env
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+```
+API_KEY=your_api_key
+```
 
-### `components`
+### nuxt.config.js
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
+```javascript
+const { API_KEY, API_URL } = process.env;
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+export default {
 
-### `layouts`
+// ...
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
+  privateRuntimeConfig: {
+    apiKey: API_KEY,
+    // apiUrL: API_URL
+  },
+  publicRuntimeConfig: {
+    apiKey: process.env.NODE_ENV !== 'production' ? API_KEY : undefined
+  },
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
+}
+```
 
+## 4. Install axios & sass
+- node-sassをインストールしてしまうと、デプロイ時にエラーが発生する
+- sass-loaderのバージョン依存を解消しないと、デプロイ時にエラーが発生する
 
-### `pages`
+[プリプロセッサ](https://nuxtjs.org/ja/docs/features/configuration/#%E3%83%97%E3%83%AA%E3%83%97%E3%83%AD%E3%82%BB%E3%83%83%E3%82%B5)
 
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
+```bash
+// axios
+$ npm install -D axios
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
+$ npm install -D sass sass-loader@10.1.1
+```
 
-### `plugins`
+### package.json
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
+```javascript
+{
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "core-js": "^3.15.1",
+    "nuxt": "^2.15.7"
+  },
+  "devDependencies": {
+    "sass": "^1.43.4",
+    "sass-loader": "^10.1.1"
+  }
+}
+```
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
+### nuxt.config.js
 
-### `static`
+```javascript 
+export default {
 
-This directory contains your static files. Each file inside this directory is mapped to `/`.
+  // ...
+  modules: [
+    "@nuxtjs/axios",
+  ],
+```
 
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
+## 5. Edit Vue Template
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
+### pages/index.vue
 
-### `store`
+```javascript
+// $config に環境変数が入っている
+<template>
+  <ul>
+    <li v-for="content in contents" :key="content.id">
+      <nuxt-link :to="`/${content.id}`">
+        {{ content.title }}
+      </nuxt-link>
+      <!-- {{ content.content }} -->
+    </li>
+  </ul>
+</template>
 
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
+<script>
+import axios from 'axios'
+export default {
+  async asyncData({ $config }) {
+    const { data } = await axios
+      .get(
+        'https://microcms-nuxt-jamstack-sample.microcms.io/api/v1/info',
+        { headers: { 'X-MICROCMS-API-KEY': $config.apiKey }}
+    )
+    return data;
+  },
+}
+</script>
+```
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+### pages/_slug/index.vue
+
+```javascript
+// $config に環境変数が入っている
+<template>
+  <main class="main">
+    <h1 class="title">{{ title }}</h1>
+    <p class="publishedAt">{{ publishedAt }}</p>
+    <div class="post" v-html="content"></div>
+  </main>
+</template>
+
+<script>
+import axios from 'axios'
+export default {
+  async asyncData({ params, $config }) {
+    const { data } = await axios.get(
+      `https://microcms-nuxt-jamstack-sample.microcms.io/api/v1/info/${params.slug}`,
+      { headers: { 'X-MICROCMS-API-KEY': $config.apiKey }
+      }
+    )
+    return data
+  },
+  // 静的ファイルを出力するのに必要な設定
+  generate: {
+    async routes( $config ) {
+      const pages = await axios.get(
+        'https://microcms-nuxt-jamstack-sample.microcms.io/api/v1/info',
+        { headers: { 'X-MICROCMS-API-KEY': $config.apiKey }}
+        )
+        .then((res) =>
+          res.data.contents.map((content) => ({
+            route: `/${content.id}`,
+            payload: content
+          }))
+        )
+      return pages
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.main {
+  width: 960px;
+  margin: 0 auto;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.publishedAt {
+  margin-bottom: 40px;
+}
+
+.post {
+  & > h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 40px 0 20px;
+    background-color: #eee;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+
+  & > h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 40px 0 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  & > p {
+    line-height: 1.8;
+    letter-spacing: 0.2px;
+  }
+
+  & > ol {
+    list-style-type: decimal;
+    list-style-position: inside;
+  }
+}
+</style>
+```
+
