@@ -20,20 +20,5 @@ export default {
     )
     return data;
   },
-  generate: {
-    async routes( $config ) {
-      const pages = await axios
-        .get('https://microcms-nuxt-jamstack-sample.microcms.io/api/v1/info',
-        { headers: { 'X-MICROCMS-API-KEY': $config.apiKey }}
-        )
-        .then((res) =>
-          res.data.contents.map((content) => ({
-            route: `/${content.id}`,
-            payload: content
-          }))
-        )
-      return pages
-    }
-  }
 }
 </script>
