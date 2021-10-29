@@ -10,6 +10,10 @@ Nuxt.js + microCMS + Netlify
 1. 環境変数を設定する 
 1. axios と sass をインストールする
 1. Vueのテーマファイルを編集する
+1. Vueファイルを静的ファイルにビルドする
+1. Netlify でホスティングするためにGitHub へソースコードをプッシュする
+1. Netlify のアカウントを作成し、ソースコードをデプロイする
+1. microCMS と Netlify を連携する
 
 ## 1. Nuxt.js をインストールする
 
@@ -227,3 +231,17 @@ export default {
 </style>
 ```
 
+## 6. Vueファイルを静的ファイルにビルドする
+
+```bash
+$ npm run generate
+$ npm start
+
+-> http://localhost:3000/
+```
+
+## 7. Netlify でホスティングするためにGitHub へソースコードをプッシュする
+
+## 8. Netlify のアカウントを作成し、ソースコードをデプロイする
+
+## 9. microCMS と Netlify を連携する
